@@ -1,0 +1,29 @@
+{
+  "name": "stringer",
+  "version": "0.0.1",
+  "description": "track events",
+  "main": "stringer.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Mayvenn/stringer.git"
+  },
+  "keywords": [
+    "tracking",
+    "events"
+  ],
+  "author": "Mayvenn",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/Mayvenn/stringer/issues"
+  },
+  "homepage": "https://github.com/Mayvenn/stringer#readme",
+  "devDependencies": {
+    "del": "^2.2.2",
+    "gulp": "^3.9.1",
+    "gulp-uglify": "^2.0.0",
+    "gulp-ver": "^0.1.0"
+  }
+}
