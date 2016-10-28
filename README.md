@@ -1,13 +1,10 @@
-# stringer
-WIP
-[x] push implementation
-  [x] UUID generation (refer to node code)  
-      currently the library expects us to use a script tag  
-  [x] send event to a fake server with the event  
-  [x] insert UUID generation code into our stringer function  
+# Stringer - Front-End Tracking Library for Mayvenn
+## Setup
+- Prerequisites: Have node and npm installed  
+- Clone this repo
+- Run `npm install`
 
-[x] init callback  
-  [x] get server url from config  
-  [x] processes all events in the array first (backfilling)  
-  
+## Usage
+Note that this code will later be pushed correctly to ECS.
+In the meantime, just use a script tag with source pointing to the local location of stringer.js.  
 
