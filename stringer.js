@@ -1,14 +1,28 @@
 (function (global, undefined) {
-    var analyticsTracker = {};
-    analyticsTracker.push = function(event) {
-        // currently expecting event to be an object of more or less
-        // of the following form
-        // {"type": "add-to-bag"
-        //  "data": {}
-        // }
-        event.UUID = uuid.v1();
-        event.ts = Date.now();
-        // TODO send the data to the server
+    // TODO change me!
+    var serverUrl = "http://localhost:8080";
+
+    function sendEvent(event) {
+        xhr = new XMLHttpRequest();
+        xhr.open("POST", serverUrl);
+        xhr.setRequestHeader("Content-Type", "application/json");
+        xhr.send(JSON.stringify(event));
     }
-    window.stringer = analyticsTracker;
+
+    function init() {
+        var analyticsTracker = {};
+        analyticsTracker.push = function(event) {
+            event.UUID = uuid.v1();
+            event.ts = Date.now();
+            sendEvent(event);
+        }
+        // expecting analyticsTracker to be an array before script was loaded
+        // backfill
+        if ("number" === typeof window.stringer.length ? window.stringer.length : 0) {
+            window.stringer.forEach(analyticsTracker.push);
+        }
+        window.stringer = analyticsTracker;
+    }
+    init();
+
 })(window);
