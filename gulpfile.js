@@ -1,5 +1,4 @@
 var gulp = require('gulp');
-var concat = require('gulp-concat');
 var del = require('del');
 var uglify = require('gulp-uglify');
 var ver = require('gulp-ver');
@@ -9,13 +8,16 @@ gulp.task('clean-min-js', function () {
 });
 
 
-gulp.task('concat-minify-and-version', ['clean-min-js'], function () {
-    return gulp.src(['uuid.js', 'stringer.js'])
-        .pipe(concat('combined.js'))
+gulp.task('minify-and-version', ['clean-min-js'], function () {
+    return gulp.src(['stringer.js'])
         .pipe(uglify())
         .pipe(ver())
         .pipe(gulp.dest('target/'));
 });
 
 
-gulp.task('default', ['concat-minify-and-version']);
+gulp.task('default', ['minify-and-version']);
+
+gulp.task('watch', function(){
+  gulp.watch('stringer.js', ['minify-and-version']);
+})
