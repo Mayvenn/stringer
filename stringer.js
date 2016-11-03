@@ -1,9 +1,14 @@
+"use strict";
+
 (function (window, undefined) {
   var self = {
-    serverURI: "http://localhost:8080",
     device: {},
     queue: [],
-    debug: true
+    config: {
+      sourceSite: "default",
+      serverURI: "http://localhost:8080",
+      debug: true // Change before going prod
+    }
   };
 
   var publicCommands = {};
@@ -47,7 +52,7 @@
   };
 
   publicCommands.config = function (config = {}) {
-    Object.assign(self, config);
+    Object.assign(self["config"], config);
   };
 
   publicCommands.track = function (args) {
@@ -55,7 +60,7 @@
       send(Object.assign({},
                          args,
                          self.device,
-                         {sourceSite: self.sourceSite,
+                         {sourceSite: self.config.sourceSite,
                           pageURI: window.location.href,
                           pageTitle: window.document.title,
                           referrer: window.document.referrer}));
@@ -72,7 +77,7 @@
   }
 
   function log() {
-    if (self.debug &&
+    if (self.config.debug &&
         'undefined' !== typeof console &&
         console.log) {
       console.log.apply(null, arguments);
@@ -80,9 +85,9 @@
   }
 
   function send(payload) {
-    log("send", self.serverURI, payload);
-    xhr = new XMLHttpRequest();
-    xhr.open("POST", self.serverURI);
+    log("send", self.config.serverURI, payload);
+    var xhr = new XMLHttpRequest();
+    xhr.open("POST", self.config.serverURI);
     xhr.setRequestHeader("Content-Type", "text/plain");
     xhr.send(JSON.stringify(payload));
   }
