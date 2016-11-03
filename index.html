@@ -6,7 +6,8 @@
         <script>
          window.stringer = window.stringer || [];
          window.stringer.push(['config', {debug: true,
-                                          serverURI: "http://httpbin.com/post"}]);
+                                          serverURI: "http://127.0.0.1:8000/post",
+                                          sourceSite: "storefront"}]);
          window.stringer.push(['track', {eventName: 'blah',
                                          "hello": true}]);
          window.stringer.push(['track', {"hello": true}]);

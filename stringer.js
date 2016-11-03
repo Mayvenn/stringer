@@ -55,7 +55,8 @@
       send(Object.assign({},
                          args,
                          self.device,
-                         {pageURI: window.location.href,
+                         {sourceSite: self.sourceSite,
+                          pageURI: window.location.href,
                           pageTitle: window.document.title,
                           referrer: window.document.referrer}));
     }
