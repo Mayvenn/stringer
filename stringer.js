@@ -11,7 +11,8 @@
     }
   };
 
-  var publicCommands = {};
+  var publicCommands = {},
+      rng;
 
   self.load = function () {
     if (window.hasOwnProperty("stringer") &&
@@ -22,15 +23,13 @@
         self.queue.push(e);
       }, self);
 
-      var rng = initRandom(window);
+      rng = initRandom(window);
 
       self.push = function() {
         for (var i in arguments) {
           var event = arguments[i];
           var commandName = event[0];
           var args = event[1];
-          args.uuid = uuid(rng);
-          args.ts = Date.now();
           var cmd = publicCommands[commandName];
           if (cmd) {
             log("invoke", commandName, args);
@@ -57,23 +56,32 @@
   };
 
   publicCommands.track = function (args) {
-    if (args["eventName"]) {
-      send(Object.assign({},
-                         args,
-                         self.device,
-                         {sourceSite: self.config.sourceSite,
-                          pageURI: window.location.href,
-                          pageTitle: window.document.title,
-                          referrer: window.document.referrer}));
+    var eventName = args.eventName;
+    delete args.eventName;
+    if (eventName) {
+      send({
+        ts: Date.now(),
+        id: uuid(rng),
+        name: eventName,
+        source: self.config.sourceSite,
+        device: self.device,
+        page: {
+          uri: window.location.href,
+          title: window.document.title,
+          referrer: window.document.referrer
+        },
+        properties: args,
+        visitor: {}
+      });
     }
   };
 
   function captureDevice() {
     return {
-      userAgent: window.navigator.userAgent,
-      screenHeight: window.screen.height,
-      screenWidth: window.screen.width,
-      screenPixelRatio: window.devicePixelRatio
+      user_agent: window.navigator.userAgent,
+      screen_height: window.screen.height,
+      screen_width: window.screen.width,
+      pixel_ratio: window.devicePixelRatio
     };
   }
 
