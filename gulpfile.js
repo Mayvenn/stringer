@@ -10,7 +10,9 @@ gulp.task('clean-min-js', function () {
 
 gulp.task('minify-and-version', ['clean-min-js'], function () {
     return gulp.src(['stringer.js'])
-        .pipe(uglify())
+        .pipe(uglify().on('error', function(e){
+            console.log(e);
+        }))
         .pipe(ver())
         .pipe(gulp.dest('target/'));
 });

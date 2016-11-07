@@ -51,7 +51,8 @@
     return self;
   };
 
-  publicCommands.config = function (config = {}) {
+  publicCommands.config = function (config) {
+    config = config || {};
     Object.assign(self["config"], config);
   };
 
