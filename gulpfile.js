@@ -1,7 +1,7 @@
 var gulp = require('gulp');
 var del = require('del');
 var uglify = require('gulp-uglify');
-var ver = require('gulp-ver');
+var rev = require('gulp-rev');
 
 gulp.task('clean-min-js', function () {
   return del(['./target']);
@@ -13,7 +13,7 @@ gulp.task('minify-and-version', ['clean-min-js'], function () {
         .pipe(uglify().on('error', function(e){
             console.log(e);
         }))
-        .pipe(ver())
+        .pipe(rev())
         .pipe(gulp.dest('target/'));
 });
 
