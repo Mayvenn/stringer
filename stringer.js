@@ -1,70 +1,30 @@
 "use strict";
 
 (function (window, undefined) {
-  var self = {
-    device: {},
-    queue: [],
-    config: {
-      sourceSite: "default",
-      serverURI: "http://localhost:8080",
-      debug: true // Change before going prod
-    }
-  };
-
-  var publicCommands = {},
-      rng;
-
-  self.load = function () {
-    if (window.hasOwnProperty("stringer") &&
-        Array.isArray(window.stringer)) {
-      log("load", window.stringer);
-
-      window.stringer.forEach(function(e) {
-        self.queue.push(e);
-      }, self);
-
+  var self = {},
+      device = captureDevice(),
+      sourceSite = "default",
+      serverURI = "http://localhost:8080",
+      debug = true, // Change before going prod
       rng = initRandom(window);
 
-      self.push = function() {
-        for (var i in arguments) {
-          var event = arguments[i];
-          var commandName = event[0];
-          var args = event[1];
-          var cmd = publicCommands[commandName];
-          if (cmd) {
-            log("invoke", commandName, args);
-            cmd.call(null, args);
-          } else {
-            log("invalid command", commandName);
-          }
-        }
-        return arguments.length;
-      };
+  // Only public functions/vars should be on self, otherwise leave them in the closure!
 
-      self.device = captureDevice();
-
-      self.push.apply(self, self.queue);
-      delete self.queue;
-    }
-
+  self.init = function(config) {
+    serverURI = config["serverURI"] || serverURI;
+    sourceSite = config["sourceSite"] || sourceSite;
+    debug = config["debug"] || debug;
     return self;
   };
 
-  publicCommands.config = function (config) {
-    config = config || {};
-    Object.assign(self["config"], config);
-  };
-
-  publicCommands.track = function (args) {
-    var eventName = args.eventName;
-    delete args.eventName;
+  self.track = function (eventName, args) {
     if (eventName) {
       send({
         ts: Date.now(),
         id: uuid(rng),
         name: eventName,
-        source: self.config.sourceSite,
-        device: self.device,
+        source: sourceSite,
+        device: device,
         page: {
           uri: window.location.href,
           title: window.document.title,
@@ -74,7 +34,26 @@
         visitor: {}
       });
     }
+    return self;
   };
+
+  function processQueue() {
+    if (Array.isArray(window.stringer)) {
+      var queue = window.stringer;
+      log("processing queue", queue);
+
+      queue.forEach(function(args) {
+        var cmdName = args.shift(1),
+            cmd = self[cmdName];
+        if (cmd) {
+          log("invoke", cmdName, args);
+          cmd.apply(null, args);
+        } else {
+          log("invalid command", cmdName);
+        }
+      });
+    }
+  }
 
   function captureDevice() {
     return {
@@ -86,21 +65,20 @@
   }
 
   function log() {
-    if (self.config.debug &&
-        'undefined' !== typeof console &&
-        console.log) {
+    if (debug && 'undefined' !== typeof console && console.log) {
       console.log.apply(null, arguments);
     }
   }
 
   function send(payload) {
-    log("send", self.config.serverURI, payload);
+    log("send", serverURI, payload);
     var xhr = new XMLHttpRequest();
-    xhr.open("POST", self.config.serverURI);
+    xhr.open("POST", serverURI);
     xhr.setRequestHeader("Content-Type", "text/plain");
     xhr.send(JSON.stringify(payload));
   }
 
+  // from https://github.com/broofa/node-uuid
   function initRandom(window) {
     var _rng;
     var _crypto = window.crypto || window.msCrypto;
@@ -151,32 +129,7 @@
         bth[rnds[i++]] + bth[rnds[i++]];
   }
 
-  // -- Polyfills --
-
-  if (typeof Object.assign != 'function') {
-    (function () {
-      Object.assign = function (target) {
-        'use strict';
-        // We must check against these specific cases.
-        if (target === undefined || target === null) {
-          throw new TypeError('Cannot convert undefined or null to object');
-        }
-
-        var output = Object(target);
-        for (var index = 1; index < arguments.length; index++) {
-          var source = arguments[index];
-          if (source !== undefined && source !== null) {
-            for (var nextKey in source) {
-              if (source.hasOwnProperty(nextKey)) {
-                output[nextKey] = source[nextKey];
-              }
-            }
-          }
-        }
-        return output;
-      };
-    })();
-  }
-
-  window.stringer = self.load();
+  processQueue();
+  window.stringer = self;
 })(window);
+

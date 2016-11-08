@@ -4,16 +4,41 @@
         <title>Test</title>
 
         <script>
-         window.stringer = window.stringer || [];
-         window.stringer.push(['config', {debug: true,
-                                          serverURI: "http://localhost:3013/api/track",
-                                          sourceSite: "storefront"}]);
-         window.stringer.push(['track', {eventName: 'blah',
-                                         "hello": true}]);
-         window.stringer.push(['track', {"hello": true}]);
+        // snippet for all sites to use below
+        (function() {
+          var stringer = window.stringer = window.stringer || [],
+              methods = ["init", "track"];
+
+          function stub(method) {
+            return function() {
+              var args = Array.prototype.slice.call(arguments);
+              args.unshift(method);
+              stringer.push(args);
+              return stringer;
+            };
+          }
+
+          for (var i = 0; i < methods.length; i++) {
+            var k = methods[i];
+            stringer[k] = stub(k);
+          }
+
+          var script = document.createElement('script');
+          script.type = 'text/javascript';
+          script.async = true;
+          script.src = "stringer.js";
+          var first = document.getElementsByTagName('script')[0];
+          first.parentNode.insertBefore(script, first);
+
+
+          stringer.init({debug: true,
+                         serverURI: "http://localhost:3013/api/track",
+                         sourceSite: "storefront"});
+        })();
         </script>
-        <script src="stringer.js" async></script>
         <script>
+         window.stringer.track('blah', {"hello": true});
+         window.stringer.track(undefined, {"hello": true});
         </script>
     </head>
     <body>
