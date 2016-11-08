@@ -45,6 +45,7 @@ describe("test stringer", function() {
     expect(device.screen_height).toBeDefined();
     expect(device.screen_width).toBeDefined();
     expect(device.pixel_ratio).toBeDefined();
+    expect(device.vendor).toBeDefined();
 
     var page = params.page;
     expect(page).toBeDefined();
