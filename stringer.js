@@ -57,7 +57,6 @@
 
   function captureDevice() {
     return {
-      user_agent: window.navigator.userAgent,
       screen_height: window.screen.height,
       screen_width: window.screen.width,
       pixel_ratio: window.devicePixelRatio
