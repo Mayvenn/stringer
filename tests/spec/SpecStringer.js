@@ -8,21 +8,15 @@ describe("test stringer", function() {
     jasmine.Ajax.uninstall();
   });
 
-  it("makes correct request when pushed after stringer has loaded", function() {
+  it("makes correct request when tracked after stringer has loaded", function() {
     var serverURI = "http://ticker-tape.diva-acceptance.com/api/track";
     var sourceSite = "test";
-    window.stringer.push(['config',
-                          {serverURI: serverURI,
-                           sourceSite: sourceSite}]);
-
-    var data = {
-      eventName: 'add-to-bag',
-      "hello": true
-    };
+    window.stringer.init({serverURI: serverURI,
+                          sourceSite: sourceSite});
 
     // Get estimated timestamp range for the request
     var tsStart = Date.now();
-    window.stringer.push(["track", data]);
+    window.stringer.track('add-to-bag', { "hello": true });
     var tsEnd = Date.now();
 
     var request = jasmine.Ajax.requests.mostRecent();
@@ -43,7 +37,7 @@ describe("test stringer", function() {
     expect(params.ts).not.toBeLessThan(tsStart);
     expect(params.ts).not.toBeGreaterThan(tsEnd);
 
-    expect(params.name).toEqual("add-to-bag");
+    expect(params.name).toEqual('add-to-bag');
     expect(params.source).toEqual(sourceSite);
 
     var device = params.device;
