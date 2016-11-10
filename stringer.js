@@ -12,7 +12,7 @@
   // Only public functions/vars should be on self, otherwise leave them in the closure!
 
   self.init = function (config) {
-    setCookie("stringer.id", device.id);
+    setCookie("stringer.distinct_id", device.distinct_id, rootDomain());
     serverURI = config["serverURI"] || serverURI;
     sourceSite = config["sourceSite"] || sourceSite;
     debug = config["debug"] || debug;
@@ -89,7 +89,7 @@
 
   function captureDevice() {
     return {
-      id: readCookie("stringer.id") || uuid(rng),
+      distinct_id: readCookie("stringer.distinct_id") || uuid(rng),
       screen_height: window.screen.height,
       screen_width: window.screen.width,
       pixel_ratio: window.devicePixelRatio,
@@ -124,16 +124,24 @@
     return null;
   }
 
-  function setCookie(key, value) {
+  function rootDomain() {
+    var domain_parts = window.location.hostname.split('.');
+    var root_domain_parts = domain_parts.slice(Math.max(domain_parts.length - 2, 0));
+    return root_domain_parts.join('.');
+  }
+
+  function setCookie(key, value, domain) {
+    domain = domain || window.location.hostname;
     if (!isNull(value)) {
-      window.document.cookie = key + "=" + value + "; path=/";
+      window.document.cookie = key + "=" + value + "; domain=" + domain + "; path=/";
     }
   }
 
-  function removeCookie(key) {
+  function removeCookie(key, domain) {
+    domain = domain || window.location.hostname;
     var pastDate = new Date(1970, 1 /*Feb*/, 1);
     var expiresStr = ';expires=' + pastDate.toUTCString();
-    window.document.cookie = key + "=" + "blarg; path=/" + expiresStr;
+    window.document.cookie = key + "=" + "_; domain=" + domain + "; path=/" + expiresStr;
   }
 
   function log() {
