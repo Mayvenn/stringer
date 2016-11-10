@@ -41,11 +41,20 @@
     return self;
   };
 
+  function isNull(value) {
+    return (value === null || "undefined" == typeof value);
+  }
+
   self.identify = function (email, user_id) {
-    visitor = {
-      email: email,
-      user_id: user_id
-    };
+    visitor = {};
+    if (!isNull(email)) {
+      visitor.email = email;
+    }
+
+    if (!isNull(user_id)) {
+      visitor.user_id = user_id;
+    }
+
     setCookie("stringer.email", email);
     setCookie("stringer.user_id", user_id);
     self.track("identify");
@@ -116,7 +125,9 @@
   }
 
   function setCookie(key, value) {
-    window.document.cookie = key + "=" + value + "; path=/";
+    if (!isNull(value)) {
+      window.document.cookie = key + "=" + value + "; path=/";
+    }
   }
 
   function removeCookie(key) {
