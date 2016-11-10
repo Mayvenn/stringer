@@ -4,7 +4,7 @@
   var self = {},
       rng = initRandom(window),
       device = captureDevice(),
-      visitor = {},
+      visitor = fetchVisitor(),
       sourceSite = "default",
       serverURI = "http://localhost:8080",
       debug = true; // Change before going prod
@@ -12,7 +12,7 @@
   // Only public functions/vars should be on self, otherwise leave them in the closure!
 
   self.init = function (config) {
-    setCookie("stringer_id", device.id);
+    setCookie("stringer.id", device.id);
     serverURI = config["serverURI"] || serverURI;
     sourceSite = config["sourceSite"] || sourceSite;
     debug = config["debug"] || debug;
@@ -46,12 +46,16 @@
       email: email,
       user_id: user_id
     };
+    setCookie("stringer.email", email);
+    setCookie("stringer.user_id", user_id);
     self.track("identify");
     return self;
   };
 
   self.clear = function() {
     visitor = {};
+    removeCookie("stringer.email");
+    removeCookie("stringer.user_id");
     self.track("clear_identify");
     return self;
   };
@@ -76,12 +80,26 @@
 
   function captureDevice() {
     return {
-      id: readCookie("stringer_id") || uuid(rng),
+      id: readCookie("stringer.id") || uuid(rng),
       screen_height: window.screen.height,
       screen_width: window.screen.width,
       pixel_ratio: window.devicePixelRatio,
       vendor: window.navigator.vendor
     };
+  }
+
+  function fetchVisitor() {
+    var visitor = {};
+    var email = readCookie("stringer.email");
+    var user_id = readCookie("stringer.user_id");
+
+    if (!!email) {
+      visitor.email = email;
+    }
+    if (!!user_id) {
+      visitor.user_id = user_id;
+    }
+    return visitor;
   }
 
   function readCookie(key) {
@@ -99,6 +117,12 @@
 
   function setCookie(key, value) {
     window.document.cookie = key + "=" + value + "; path=/";
+  }
+
+  function removeCookie(key) {
+    var pastDate = new Date(1970, 1 /*Feb*/, 1);
+    var expiresStr = ';expires=' + pastDate.toUTCString();
+    window.document.cookie = key + "=" + "blarg; path=/" + expiresStr;
   }
 
   function log() {
