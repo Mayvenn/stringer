@@ -18,7 +18,9 @@
   };
 
   self.track = function (eventName, args) {
-    if (eventName) {
+    var blockRe = /(google web preview|baiduspider|yandexbot|bingbot|googlebot|yahoo! slurp)/i;
+
+    if (eventName && !blockRe.test(window.navigator.userAgent)) {
       send({
         ts: Date.now(),
         id: uuid(rng),
