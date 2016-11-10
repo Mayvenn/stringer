@@ -21,7 +21,7 @@
 
   self.track = function (eventName, args) {
     var blockRe = /(google web preview|baiduspider|yandexbot|bingbot|googlebot|yahoo! slurp)/i;
-    
+
     if (eventName && !blockRe.test(window.navigator.userAgent)) {
       send({
         ts: Date.now(),
@@ -41,13 +41,18 @@
     return self;
   };
 
-  self.identify = function (a_visitor = {}) {
-    visitor = a_visitor;
+  self.identify = function (email, user_id) {
+    visitor = {
+      email: email,
+      user_id: user_id
+    };
+    self.track("identify");
     return self;
   };
 
   self.clear = function() {
     visitor = {};
+    self.track("clear_identify");
     return self;
   };
 
@@ -82,16 +87,18 @@
   function readCookie(key) {
     var cookies = document.cookie.split(";");
     var cookieRe = RegExp("^\\s*"+key+"=\\s*(.*?)\\s*$");
-    for (var cookie of cookies) {
+    for (var i = 0; i < cookies.length; i++) {
+      var cookie = cookies[i];
       var found = cookie.match(cookieRe);
       if (found) {
         return found[1];
       }
     }
+    return null;
   }
 
   function setCookie(key, value) {
-    window.document.cookie = key + "=" + value + ";";
+    window.document.cookie = key + "=" + value + "; path=/";
   }
 
   function log() {
