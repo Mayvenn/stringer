@@ -12,7 +12,7 @@
   // Only public functions/vars should be on self, otherwise leave them in the closure!
 
   self.init = function (config) {
-    setCookie("stringer.distinct_id", device.distinct_id, rootDomain());
+    setCookie("stringer.distinct_id", device.distinct_id, { domain: rootDomain() });
     serverURI = config["serverURI"] || serverURI;
     sourceSite = config["sourceSite"] || sourceSite;
     debug = config["debug"] || debug;
@@ -118,7 +118,7 @@
       var cookie = cookies[i];
       var found = cookie.match(cookieRe);
       if (found) {
-        return found[1];
+        return decodeURIComponent(found[1]);
       }
     }
     return null;
@@ -130,18 +130,20 @@
     return root_domain_parts.join('.');
   }
 
-  function setCookie(key, value, domain) {
-    domain = domain || window.location.hostname;
-    if (!isNull(value)) {
-      window.document.cookie = key + "=" + value + "; domain=" + domain + "; path=/";
+  function setCookie(key, value, options) {
+    options = options || {};
+    options.domain = options.domain || window.location.hostname;
+    var expires_at = new Date(new Date().getTime() + 1000 * 60 * 60 * 24 * 365 * 10);
+
+    if (isNull(value)) {
+      expires_at = new Date(1970, 1 /*Feb*/, 1);
     }
+    var cookie_str = key + "=" + encodeURIComponent(value) + "; domain=" + options.domain + "; path=/; expires=" + expires_at.toUTCString();
+    window.document.cookie = cookie_str;
   }
 
   function removeCookie(key, domain) {
-    domain = domain || window.location.hostname;
-    var pastDate = new Date(1970, 1 /*Feb*/, 1);
-    var expiresStr = ';expires=' + pastDate.toUTCString();
-    window.document.cookie = key + "=" + "_; domain=" + domain + "; path=/" + expiresStr;
+    setCookie(key, null, {domain : domain});
   }
 
   function log() {
