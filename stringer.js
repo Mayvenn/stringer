@@ -3,6 +3,7 @@
 (function (window, undefined) {
   var self = {},
       device = captureDevice(),
+      visitor = {},
       sourceSite = "default",
       serverURI = "http://localhost:8080",
       debug = true, // Change before going prod
@@ -10,7 +11,7 @@
 
   // Only public functions/vars should be on self, otherwise leave them in the closure!
 
-  self.init = function(config) {
+  self.init = function (config) {
     serverURI = config["serverURI"] || serverURI;
     sourceSite = config["sourceSite"] || sourceSite;
     debug = config["debug"] || debug;
@@ -33,9 +34,19 @@
           referrer: window.document.referrer
         },
         properties: args,
-        visitor: {}
+        visitor: visitor
       });
     }
+    return self;
+  };
+
+  self.identify = function (a_visitor = {}) {
+    visitor = a_visitor;
+    return self;
+  };
+
+  self.clear = function() {
+    visitor = {};
     return self;
   };
 
