@@ -2,16 +2,17 @@
 
 (function (window, undefined) {
   var self = {},
+      rng = initRandom(window),
       device = captureDevice(),
       visitor = {},
       sourceSite = "default",
       serverURI = "http://localhost:8080",
-      debug = true, // Change before going prod
-      rng = initRandom(window);
+      debug = true; // Change before going prod
 
   // Only public functions/vars should be on self, otherwise leave them in the closure!
 
   self.init = function (config) {
+    setCookie("stringer_id", device.id);
     serverURI = config["serverURI"] || serverURI;
     sourceSite = config["sourceSite"] || sourceSite;
     debug = config["debug"] || debug;
@@ -20,7 +21,7 @@
 
   self.track = function (eventName, args) {
     var blockRe = /(google web preview|baiduspider|yandexbot|bingbot|googlebot|yahoo! slurp)/i;
-
+    
     if (eventName && !blockRe.test(window.navigator.userAgent)) {
       send({
         ts: Date.now(),
@@ -70,11 +71,27 @@
 
   function captureDevice() {
     return {
+      id: readCookie("stringer_id") || uuid(rng),
       screen_height: window.screen.height,
       screen_width: window.screen.width,
       pixel_ratio: window.devicePixelRatio,
       vendor: window.navigator.vendor
     };
+  }
+
+  function readCookie(key) {
+    var cookies = document.cookie.split(";");
+    var cookieRe = RegExp("^\\s*"+key+"=\\s*(.*?)\\s*$");
+    for (var cookie of cookies) {
+      var found = cookie.match(cookieRe);
+      if (found) {
+        return found[1];
+      }
+    }
+  }
+
+  function setCookie(key, value) {
+    window.document.cookie = key + "=" + value + ";";
   }
 
   function log() {
