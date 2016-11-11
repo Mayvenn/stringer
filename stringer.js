@@ -7,8 +7,7 @@
       visitor = fetchVisitor(),
       sourceSite = "default",
       serverURI = "https://t.mayvenn.com/",
-      debug = false,
-      send;
+      debug = false;
 
   // Only public functions/vars should be on self, otherwise leave them in the closure!
 
@@ -153,19 +152,12 @@
     }
   }
 
-  if (window.navigator.sendBeacon) {
-    send = function send(payload) {
-      log("send", serverURI, payload);
-      window.navigator.sendBeacon(serverURI, JSON.stringify(payload));
-    };
-  } else {
-    send = function send(payload) {
-      log("send", serverURI, payload);
-      var xhr = new XMLHttpRequest();
-      xhr.open("POST", serverURI);
-      xhr.setRequestHeader("Content-Type", "text/plain");
-      xhr.send(JSON.stringify(payload));
-    };
+  function send(payload) {
+    log("send", serverURI, payload);
+    var xhr = new XMLHttpRequest();
+    xhr.open("POST", serverURI);
+    xhr.setRequestHeader("Content-Type", "text/plain");
+    xhr.send(JSON.stringify(payload));
   }
 
   // from https://github.com/broofa/node-uuid
