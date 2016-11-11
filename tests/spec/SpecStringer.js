@@ -46,9 +46,9 @@ describe("test stringer", function() {
 
     expect(params.id).toMatch(
         /[0-9A-Fa-f]{8}-[0-9A-Fa-f]{4}-[0-9A-Fa-f]{4}-[0-9A-Fa-f]{4}-[0-9A-Fa-f]{12}/);
-
-    expect(params.ts).not.toBeLessThan(tsStart);
-    expect(params.ts).not.toBeGreaterThan(tsEnd);
+    expect(params.client_timestamp).toBeDefined();
+    expect(params.client_timestamp).not.toBeLessThan(tsStart);
+    expect(params.client_timestamp).not.toBeGreaterThan(tsEnd);
 
     expect(params.name).toEqual('add-to-bag');
     expect(params.source).toEqual(sourceSite);

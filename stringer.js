@@ -25,7 +25,7 @@
 
     if (eventName && !blockRe.test(window.navigator.userAgent)) {
       send({
-        ts: Date.now(),
+        client_timestamp: Date.now(),
         id: uuid(rng),
         name: eventName,
         source: sourceSite,
@@ -46,17 +46,17 @@
     return (value === null || "undefined" == typeof value);
   }
 
-  self.identify = function (email, user_id) {
+  self.identify = function (user_email, user_id) {
     visitor = {};
-    if (!isNull(email)) {
-      visitor.email = email;
+    if (!isNull(user_email)) {
+      visitor.user_email = user_email;
     }
 
     if (!isNull(user_id)) {
       visitor.user_id = user_id;
     }
 
-    setCookie("stringer.email", email);
+    setCookie("stringer.user_email", user_email);
     setCookie("stringer.user_id", user_id);
     self.track("identify");
     return self;
@@ -64,7 +64,7 @@
 
   self.clear = function() {
     visitor = {};
-    removeCookie("stringer.email");
+    removeCookie("stringer.user_email");
     removeCookie("stringer.user_id");
     self.track("clear_identify");
     return self;
@@ -100,10 +100,10 @@
 
   function fetchVisitor() {
     var visitor = {};
-    var email = readCookie("stringer.email");
+    var user_email = readCookie("stringer.user_email");
     var user_id = readCookie("stringer.user_id");
 
-    if (!!email) {
+    if (!!user_email) {
       visitor.email = email;
     }
     if (!!user_id) {
