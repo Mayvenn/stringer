@@ -6,16 +6,16 @@
       device = captureDevice(),
       visitor = fetchVisitor(),
       sourceSite = "default",
-      serverURI = "http://localhost:8080",
-      debug = true; // Change before going prod
+      serverURI = "https://t.mayvenn.com/",
+      debug = false;
 
   // Only public functions/vars should be on self, otherwise leave them in the closure!
 
   self.init = function (config) {
     setCookie("stringer.distinct_id", device.distinct_id, { domain: rootDomain() });
-    serverURI = config["serverURI"] || serverURI;
-    sourceSite = config["sourceSite"] || sourceSite;
-    debug = config["debug"] || debug;
+    serverURI = config.serverURI || serverURI;
+    sourceSite = config.sourceSite || sourceSite;
+    debug = config.debug || debug;
     return self;
   };
 
