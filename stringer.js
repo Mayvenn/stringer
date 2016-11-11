@@ -1,6 +1,6 @@
 "use strict";
 
-(function (window, undefined) {
+(function (window, console, undefined) {
   var self = {},
       rng = initRandom(window),
       device = captureDevice(),
@@ -213,5 +213,4 @@
 
   processQueue();
   window.stringer = self;
-})(window);
-
+})(window, console);
