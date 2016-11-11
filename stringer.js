@@ -30,7 +30,7 @@
         source: sourceSite,
         device: device,
         page: {
-          uri: window.location.href,
+          url: window.location.href,
           title: window.document.title,
           referrer: window.document.referrer
         },

@@ -49,7 +49,7 @@ describe("test stringer", function() {
 
     var page = params.page;
     expect(page).toBeDefined();
-    expect(page.uri).toBeDefined();
+    expect(page.url).toBeDefined();
     expect(page.title).toBeDefined();
     expect(page.referrer).toBeDefined();
 
