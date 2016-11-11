@@ -1,6 +1,9 @@
 describe("test stringer", function() {
 
   beforeEach(function() {
+    if (window.navigator.sendBeacon) {
+      spyOn(window.navigator, "sendBeacon");
+    }
     jasmine.Ajax.install();
   });
 
@@ -9,28 +12,38 @@ describe("test stringer", function() {
   });
 
   it("makes correct request when tracked after stringer has loaded", function() {
-    var serverURI = "http://ticker-tape.diva-acceptance.com/api/track";
-    var sourceSite = "test";
+    var serverURI = "http://ticker-tape.diva-acceptance.com/api/track",
+        sourceSite = "test",
+        request, sendBeaconArgs, params, tsStart, tsEnd;
     window.stringer.init({serverURI: serverURI,
                           sourceSite: sourceSite});
 
     // Get estimated timestamp range for the request
-    var tsStart = Date.now();
+    tsStart = Date.now();
     window.stringer.track('add-to-bag', { "hello": true });
-    var tsEnd = Date.now();
+    tsEnd = Date.now();
 
-    var request = jasmine.Ajax.requests.mostRecent();
-    expect({
-      url: request.url,
-      method: request.method,
-      requestHeaders: request.requestHeaders
-    }).toEqual({
-      url: serverURI,
-      method: "POST",
-      requestHeaders: {"Content-Type": "text/plain"}
-    });
+    if (window.navigator.sendBeacon) {
+      expect(window.navigator.sendBeacon).toHaveBeenCalled();
+      sendBeaconArgs = window.navigator.sendBeacon.calls.argsFor(0);
+      expect(sendBeaconArgs[0]).toEqual(serverURI);
+      params = JSON.parse(sendBeaconArgs[1]);
+    } else {
+      request = jasmine.Ajax.requests.mostRecent();
 
-    var params = JSON.parse(request.params);
+      expect({
+        url: request.url,
+        method: request.method,
+        requestHeaders: request.requestHeaders
+      }).toEqual({
+        url: serverURI,
+        method: "POST",
+        requestHeaders: {"Content-Type": "text/plain"}
+      });
+
+      params = JSON.parse(request.params);
+    }
+
     expect(params.id).toMatch(
         /[0-9A-Fa-f]{8}-[0-9A-Fa-f]{4}-[0-9A-Fa-f]{4}-[0-9A-Fa-f]{4}-[0-9A-Fa-f]{12}/);
 
@@ -40,18 +53,16 @@ describe("test stringer", function() {
     expect(params.name).toEqual('add-to-bag');
     expect(params.source).toEqual(sourceSite);
 
-    var device = params.device;
-    expect(device).toBeDefined();
-    expect(device.screen_height).toBeDefined();
-    expect(device.screen_width).toBeDefined();
-    expect(device.pixel_ratio).toBeDefined();
-    expect(device.vendor).toBeDefined();
+    expect(params.device).toBeDefined();
+    expect(params.device.screen_height).toBeDefined();
+    expect(params.device.screen_width).toBeDefined();
+    expect(params.device.pixel_ratio).toBeDefined();
+    expect(params.device.vendor).toBeDefined();
 
-    var page = params.page;
-    expect(page).toBeDefined();
-    expect(page.url).toBeDefined();
-    expect(page.title).toBeDefined();
-    expect(page.referrer).toBeDefined();
+    expect(params.page).toBeDefined();
+    expect(params.page.url).toBeDefined();
+    expect(params.page.title).toBeDefined();
+    expect(params.page.referrer).toBeDefined();
 
     expect(params.properties).toEqual({"hello": true});
 
