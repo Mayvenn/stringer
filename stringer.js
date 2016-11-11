@@ -149,7 +149,7 @@
 
   function log() {
     if (debug && 'undefined' !== typeof console && console.log) {
-      console.log.apply(null, arguments);
+      console.log.apply(console, arguments);
     }
   }
 
