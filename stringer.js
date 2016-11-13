@@ -104,7 +104,7 @@
     var user_id = readCookie("stringer.user_id");
 
     if (!!user_email) {
-      visitor.email = email;
+      visitor.user_email = user_email;
     }
     if (!!user_id) {
       visitor.user_id = user_id;
