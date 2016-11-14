@@ -13,31 +13,39 @@
   // Only public functions/vars should be on self, otherwise leave them in the closure!
 
   self.init = function (config) {
-    setCookie("stringer.distinct_id", device.distinct_id, { domain: rootDomain() });
-    serverURI = config.serverURI || serverURI;
-    sourceSite = config.sourceSite || sourceSite;
-    debug = config.debug || debug;
+    try {
+      setCookie("stringer.distinct_id", device.distinct_id, { domain: rootDomain() });
+      serverURI = config.serverURI || serverURI;
+      sourceSite = config.sourceSite || sourceSite;
+      debug = config.debug || debug;
+    } catch (e) {
+      log("error in init", e);
+    }
     return self;
   };
 
   self.track = function (eventName, args) {
-    var blockRe = /(google web preview|baiduspider|yandexbot|bingbot|googlebot|yahoo! slurp)/i;
+    try {
+      var blockRe = /(google web preview|baiduspider|yandexbot|bingbot|googlebot|yahoo! slurp)/i;
 
-    if (eventName && !blockRe.test(window.navigator.userAgent)) {
-      send({
-        client_timestamp: Date.now(),
-        id: uuid(rng),
-        name: eventName,
-        source: sourceSite,
-        device: device,
-        page: {
-          url: window.location.href,
-          title: window.document.title,
-          referrer: window.document.referrer
-        },
-        properties: args,
-        visitor: visitor
-      });
+      if (eventName && !blockRe.test(window.navigator.userAgent)) {
+        send({
+          client_timestamp: Date.now(),
+          id: uuid(rng),
+          name: eventName,
+          source: sourceSite,
+          device: device,
+          page: {
+            url: window.location.href,
+            title: window.document.title,
+            referrer: window.document.referrer
+          },
+          properties: args,
+          visitor: visitor
+        });
+      }
+    } catch (e) {
+      log("error in track", e);
     }
     return self;
   };
@@ -47,26 +55,34 @@
   }
 
   self.identify = function (userEmail, userId) {
-    visitor = {};
-    if (!isNull(userEmail)) {
-      visitor.user_email = userEmail;
-    }
+    try {
+      visitor = {};
+      if (!isNull(userEmail)) {
+        visitor.user_email = userEmail;
+      }
 
-    if (!isNull(userId)) {
-      visitor.user_id = userId;
-    }
+      if (!isNull(userId)) {
+        visitor.user_id = userId;
+      }
 
-    setCookie("stringer.user_email", userEmail);
-    setCookie("stringer.user_id", userId);
-    self.track("identify");
+      setCookie("stringer.user_email", userEmail);
+      setCookie("stringer.user_id", userId);
+      self.track("identify");
+    } catch (e) {
+      log("error in identify", e);
+    }
     return self;
   };
 
   self.clear = function() {
-    visitor = {};
-    removeCookie("stringer.user_email");
-    removeCookie("stringer.user_id");
-    self.track("clear_identify");
+    try {
+      visitor = {};
+      removeCookie("stringer.user_email");
+      removeCookie("stringer.user_id");
+      self.track("clear_identify");
+    } catch (e) {
+      log("error in clear", e);
+    }
     return self;
   };
 
@@ -153,9 +169,11 @@
   }
 
   function log() {
-    if (debug && 'undefined' !== typeof console && console.log) {
-      console.log.apply(console, arguments);
-    }
+    try {
+      if (debug && 'undefined' !== typeof console && console.log) {
+        console.log.apply(console, arguments);
+      }
+    } catch (e) {}
   }
 
   if (window.navigator.sendBeacon) {
