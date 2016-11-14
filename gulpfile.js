@@ -13,7 +13,7 @@ gulp.task('minify-and-version', ['clean-min-js'], function () {
     .pipe(uglify().on('error', function(e){
       console.log(e);
     }))
-    .pipe(sha({length: 6}))
+    .pipe(sha({length: 7}))
     .pipe(gulp.dest('target/'));
 });
 
