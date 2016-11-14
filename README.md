@@ -5,6 +5,4 @@
 - Run `npm install`
 
 ## Usage
-Note that this code will later be pushed correctly to ECS.
-In the meantime, just use a script tag with source pointing to the local location of stringer.js.  
-
+Use a snippet similar to the one found in index.html to bring in stringer and the method stubs to support async load. When the API settles down a bit, we'll include a minified snippet here that includes a version of stringer that's on the CDN that can be directly copied into apps.
