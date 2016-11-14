@@ -139,7 +139,12 @@
     if (isNull(value)) {
       expiresAt = new Date(1970, 1 /*Feb*/, 1);
     }
+
     var cookieStr = key + "=" + encodeURIComponent(value) + "; domain=" + options.domain + "; path=/; expires=" + expiresAt.toUTCString();
+    if (window.location.protocol === "https:") {
+      cookieStr = cookieStr + ";secure";
+    }
+
     window.document.cookie = cookieStr;
   }
 
