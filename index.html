@@ -7,7 +7,7 @@
         // snippet for all sites to use below; modify stringer.init as appropriate
         (function() {
           var stringer = window.stringer = window.stringer || [],
-              methods = ["init", "track"];
+              methods = ["init", "track", "identify", "clear"];
 
           function stub(method) {
             return function() {
