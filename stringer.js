@@ -46,18 +46,18 @@
     return (value === null || "undefined" == typeof value);
   }
 
-  self.identify = function (user_email, user_id) {
+  self.identify = function (userEmail, userId) {
     visitor = {};
-    if (!isNull(user_email)) {
-      visitor.user_email = user_email;
+    if (!isNull(userEmail)) {
+      visitor.user_email = userEmail;
     }
 
-    if (!isNull(user_id)) {
-      visitor.user_id = user_id;
+    if (!isNull(userId)) {
+      visitor.user_id = userId;
     }
 
-    setCookie("stringer.user_email", user_email);
-    setCookie("stringer.user_id", user_id);
+    setCookie("stringer.user_email", userEmail);
+    setCookie("stringer.user_id", userId);
     self.track("identify");
     return self;
   };
@@ -100,14 +100,14 @@
 
   function fetchVisitor() {
     var visitor = {};
-    var user_email = readCookie("stringer.user_email");
-    var user_id = readCookie("stringer.user_id");
+    var userEmail = readCookie("stringer.user_email");
+    var userId = readCookie("stringer.user_id");
 
-    if (!!user_email) {
-      visitor.user_email = user_email;
+    if (!!userEmail) {
+      visitor.user_email = userEmail;
     }
-    if (!!user_id) {
-      visitor.user_id = user_id;
+    if (!!userId) {
+      visitor.user_id = userId;
     }
     return visitor;
   }
@@ -126,21 +126,21 @@
   }
 
   function rootDomain() {
-    var domain_parts = window.location.hostname.split('.');
-    var root_domain_parts = domain_parts.slice(Math.max(domain_parts.length - 2, 0));
-    return root_domain_parts.join('.');
+    var domainParts = window.location.hostname.split('.');
+    var rootDomainParts = domainParts.slice(Math.max(domainParts.length - 2, 0));
+    return rootDomainParts.join('.');
   }
 
   function setCookie(key, value, options) {
     options = options || {};
     options.domain = options.domain || window.location.hostname;
-    var expires_at = new Date(new Date().getTime() + 1000 * 60 * 60 * 24 * 365 * 10);
+    var expiresAt = new Date(new Date().getTime() + 1000 * 60 * 60 * 24 * 365 * 10);
 
     if (isNull(value)) {
-      expires_at = new Date(1970, 1 /*Feb*/, 1);
+      expiresAt = new Date(1970, 1 /*Feb*/, 1);
     }
-    var cookie_str = key + "=" + encodeURIComponent(value) + "; domain=" + options.domain + "; path=/; expires=" + expires_at.toUTCString();
-    window.document.cookie = cookie_str;
+    var cookieStr = key + "=" + encodeURIComponent(value) + "; domain=" + options.domain + "; path=/; expires=" + expiresAt.toUTCString();
+    window.document.cookie = cookieStr;
   }
 
   function removeCookie(key, domain) {
