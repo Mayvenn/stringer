@@ -9,12 +9,12 @@ gulp.task('clean-min-js', function () {
 
 
 gulp.task('minify-and-version', ['clean-min-js'], function () {
-    return gulp.src(['stringer.js'])
-        .pipe(uglify().on('error', function(e){
-            console.log(e);
-        }))
-        .pipe(sha())
-        .pipe(gulp.dest('target/'));
+  return gulp.src(['stringer.js'])
+    .pipe(uglify().on('error', function(e){
+      console.log(e);
+    }))
+    .pipe(sha({length: 6}))
+    .pipe(gulp.dest('target/'));
 });
 
 
