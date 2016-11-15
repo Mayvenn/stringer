@@ -9,6 +9,10 @@
           var stringer = window.stringer = window.stringer || [],
               methods = ["init", "track", "identify", "clear"];
 
+          if (stringer.snippetRan || stringer.loaded) { return; }
+
+          stringer.snippetRan = true;
+
           function stub(method) {
             return function() {
               var args = Array.prototype.slice.call(arguments);

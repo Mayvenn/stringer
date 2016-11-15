@@ -10,8 +10,6 @@
       debug = false,
       send;
 
-  // Only public functions/vars should be on self, otherwise leave them in the closure!
-
   function init(config) {
     setCookie("stringer.distinct_id", device.distinct_id, { domain: rootDomain() });
     serverURI = config.serverURI || serverURI;
@@ -248,6 +246,9 @@
     };
   }
 
+  // These should be the only public functions/vars that are exposed through self,
+  // otherwise leave them in the closure!
+  self.loaded = true;
   addPublicFn("init", init);
   addPublicFn("track", track);
   addPublicFn("identify", identify);
