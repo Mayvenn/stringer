@@ -1,6 +1,6 @@
 "use strict";
 
-(function (window, console, undefined) {
+(function (window, console, oldStringer, undefined) {
   var self = {},
       rng = initRandom(window),
       device = captureDevice(),
@@ -64,22 +64,21 @@
     return (value === null || "undefined" == typeof value);
   }
 
-  function processQueue() {
-    if (Array.isArray(window.stringer)) {
-      var queue = window.stringer;
-      log("processing queue", queue);
+  function processQueue(queue) {
+    log("processing queue", queue);
 
-      queue.forEach(function(args) {
-        var cmdName = args.shift(1),
-            cmd = self[cmdName];
-        if (cmd) {
-          log("invoke", cmdName, args);
-          cmd.apply(null, args);
-        } else {
-          log("invalid command", cmdName);
-        }
-      });
-    }
+    queue.forEach(function(args) {
+      var cmdName = args.shift(1),
+          cmd = self[cmdName];
+      if (cmd) {
+        log("invoke", cmdName, args);
+        cmd.apply(null, args);
+      } else {
+        log("invalid command", cmdName);
+      }
+    });
+
+    queue.length = 0;
   }
 
   function captureDevice() {
@@ -254,6 +253,8 @@
   addPublicFn("identify", identify);
   addPublicFn("clear", clear);
 
-  processQueue();
   window.stringer = self;
-})(window, console);
+  if (Array.isArray(oldStringer)) {
+    processQueue(oldStringer);
+  }
+})(window, console, window.stringer);
