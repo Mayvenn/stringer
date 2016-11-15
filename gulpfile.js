@@ -14,7 +14,7 @@ gulp.task('build-js', ['clean-build'], function () {
   return gulp.src(['stringer.js'])
     .pipe(uglify().on('error', function(e) { console.log(e); }))
     .pipe(sha({length: 7}))
-    .pipe(gzip({ append: false }))
+    .pipe(gzip({append: false}))
     .pipe(gulp.dest(BUILD_DIR));
 });
 
