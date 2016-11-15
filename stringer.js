@@ -12,14 +12,14 @@
 
   // Only public functions/vars should be on self, otherwise leave them in the closure!
 
-  self.init = wrapPublicFn("init", function (config) {
+  function init(config) {
     setCookie("stringer.distinct_id", device.distinct_id, { domain: rootDomain() });
     serverURI = config.serverURI || serverURI;
     sourceSite = config.sourceSite || sourceSite;
     debug = config.debug || debug;
-  });
+  };
 
-  self.track = wrapPublicFn("track", function (eventName, args) {
+  function track (eventName, args) {
     var blockRe = /(google web preview|baiduspider|yandexbot|bingbot|googlebot|yahoo! slurp)/i;
 
     if (eventName && !blockRe.test(window.navigator.userAgent)) {
@@ -38,9 +38,9 @@
         visitor: visitor
       });
     }
-  });
+  };
 
-  self.identify = wrapPublicFn("identify", function (userEmail, userId) {
+  function identify (userEmail, userId) {
     visitor = {};
     if (!isNull(userEmail)) {
       visitor.user_email = userEmail;
@@ -52,26 +52,15 @@
 
     setCookie("stringer.user_email", userEmail);
     setCookie("stringer.user_id", userId);
-    self.track("identify");
-  });
+    track("identify");
+  };
 
-  self.clear = wrapPublicFn("clear", function() {
+  function clear () {
     visitor = {};
     removeCookie("stringer.user_email");
     removeCookie("stringer.user_id");
-    self.track("clear_identify");
-  });
-
-  function wrapPublicFn(name, f) {
-    return function() {
-      try {
-        f.apply(self, arguments);
-      } catch (e) {
-        log("error in " + name, e);
-      }
-      return self;
-    }
-  }
+    track("clear_identify");
+  };
 
   function isNull(value) {
     return (value === null || "undefined" == typeof value);
@@ -247,6 +236,22 @@
 
     return text;
   }
+
+  function addPublicFn(name, f) {
+    self[name] = function() {
+      try {
+        f.apply(self, arguments);
+      } catch (e) {
+        log("error in " + name, e);
+      }
+      return self;
+    };
+  }
+
+  addPublicFn("init", init);
+  addPublicFn("track", track);
+  addPublicFn("identify", identify);
+  addPublicFn("clear", clear);
 
   processQueue();
   window.stringer = self;
