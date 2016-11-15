@@ -106,7 +106,7 @@
 
   function captureDevice() {
     return {
-      distinct_id: readCookie("stringer.distinct_id") || uuid(rng),
+      distinct_id: readCookie("stringer.distinct_id") || makeid(24),
       screen_height: window.screen.height,
       screen_width: window.screen.width,
       pixel_ratio: window.devicePixelRatio,
@@ -240,6 +240,21 @@
         bth[rnds[i++]] + bth[rnds[i++]] +
         bth[rnds[i++]] + bth[rnds[i++]] +
         bth[rnds[i++]] + bth[rnds[i++]];
+  }
+
+  /* Gives strings with 62 ^ n bits of entropy
+     NOTE: this is not a particularly FAST generator. It should only be called
+     infrequently, unlike the UUID generation code which can more efficiently
+     generate randomness. */
+  function makeid(n) {
+    var text = "";
+    var possible = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
+
+    for (var i=0; i < n; i++) {
+      text += possible.charAt(Math.floor(Math.random() * possible.length));
+    }
+
+    return text;
   }
 
   processQueue();
