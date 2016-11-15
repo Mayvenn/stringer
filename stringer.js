@@ -12,79 +12,70 @@
 
   // Only public functions/vars should be on self, otherwise leave them in the closure!
 
-  self.init = function (config) {
-    try {
-      setCookie("stringer.distinct_id", device.distinct_id, { domain: rootDomain() });
-      serverURI = config.serverURI || serverURI;
-      sourceSite = config.sourceSite || sourceSite;
-      debug = config.debug || debug;
-    } catch (e) {
-      log("error in init", e);
+  self.init = wrapPublicFn("init", function (config) {
+    setCookie("stringer.distinct_id", device.distinct_id, { domain: rootDomain() });
+    serverURI = config.serverURI || serverURI;
+    sourceSite = config.sourceSite || sourceSite;
+    debug = config.debug || debug;
+  });
+
+  self.track = wrapPublicFn("track", function (eventName, args) {
+    var blockRe = /(google web preview|baiduspider|yandexbot|bingbot|googlebot|yahoo! slurp)/i;
+
+    if (eventName && !blockRe.test(window.navigator.userAgent)) {
+      send({
+        client_timestamp: Date.now(),
+        id: uuid(rng),
+        name: eventName,
+        source: sourceSite,
+        device: device,
+        page: {
+          url: window.location.href,
+          title: window.document.title,
+          referrer: window.document.referrer
+        },
+        properties: args,
+        visitor: visitor
+      });
     }
-    return self;
-  };
+  });
 
-  self.track = function (eventName, args) {
-    try {
-      var blockRe = /(google web preview|baiduspider|yandexbot|bingbot|googlebot|yahoo! slurp)/i;
+  self.identify = wrapPublicFn("identify", function (userEmail, userId) {
+    visitor = {};
+    if (!isNull(userEmail)) {
+      visitor.user_email = userEmail;
+    }
 
-      if (eventName && !blockRe.test(window.navigator.userAgent)) {
-        send({
-          client_timestamp: Date.now(),
-          id: uuid(rng),
-          name: eventName,
-          source: sourceSite,
-          device: device,
-          page: {
-            url: window.location.href,
-            title: window.document.title,
-            referrer: window.document.referrer
-          },
-          properties: args,
-          visitor: visitor
-        });
+    if (!isNull(userId)) {
+      visitor.user_id = userId;
+    }
+
+    setCookie("stringer.user_email", userEmail);
+    setCookie("stringer.user_id", userId);
+    self.track("identify");
+  });
+
+  self.clear = wrapPublicFn("clear", function() {
+    visitor = {};
+    removeCookie("stringer.user_email");
+    removeCookie("stringer.user_id");
+    self.track("clear_identify");
+  });
+
+  function wrapPublicFn(name, f) {
+    return function() {
+      try {
+        f.apply(self, arguments);
+      } catch (e) {
+        log("error in " + name, e);
       }
-    } catch (e) {
-      log("error in track", e);
+      return self;
     }
-    return self;
-  };
+  }
 
   function isNull(value) {
     return (value === null || "undefined" == typeof value);
   }
-
-  self.identify = function (userEmail, userId) {
-    try {
-      visitor = {};
-      if (!isNull(userEmail)) {
-        visitor.user_email = userEmail;
-      }
-
-      if (!isNull(userId)) {
-        visitor.user_id = userId;
-      }
-
-      setCookie("stringer.user_email", userEmail);
-      setCookie("stringer.user_id", userId);
-      self.track("identify");
-    } catch (e) {
-      log("error in identify", e);
-    }
-    return self;
-  };
-
-  self.clear = function() {
-    try {
-      visitor = {};
-      removeCookie("stringer.user_email");
-      removeCookie("stringer.user_id");
-      self.track("clear_identify");
-    } catch (e) {
-      log("error in clear", e);
-    }
-    return self;
-  };
 
   function processQueue() {
     if (Array.isArray(window.stringer)) {
