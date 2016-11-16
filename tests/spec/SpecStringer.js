@@ -46,26 +46,26 @@ describe("test stringer", function() {
 
     expect(params.id).toMatch(
         /[0-9A-Fa-f]{8}-[0-9A-Fa-f]{4}-[0-9A-Fa-f]{4}-[0-9A-Fa-f]{4}-[0-9A-Fa-f]{12}/);
-    expect(params.client_timestamp).toBeDefined();
-    expect(params.client_timestamp).not.toBeLessThan(tsStart);
-    expect(params.client_timestamp).not.toBeGreaterThan(tsEnd);
+    expect(params.resource.stringer.ts).toBeDefined();
+    expect(params.resource.stringer.ts).not.toBeLessThan(tsStart);
+    expect(params.resource.stringer.ts).not.toBeGreaterThan(tsEnd);
 
     expect(params.name).toEqual('add-to-bag');
     expect(params.source).toEqual(sourceSite);
 
-    expect(params.device).toBeDefined();
-    expect(params.device.screen_height).toBeDefined();
-    expect(params.device.screen_width).toBeDefined();
-    expect(params.device.pixel_ratio).toBeDefined();
-    expect(params.device.vendor).toBeDefined();
+    expect(params.resource.device).toBeDefined();
+    expect(params.resource.device.screen_height).toBeDefined();
+    expect(params.resource.device.screen_width).toBeDefined();
+    expect(params.resource.device.pixel_ratio).toBeDefined();
+    expect(params.resource.device.vendor).toBeDefined();
 
-    expect(params.page).toBeDefined();
-    expect(params.page.url).toBeDefined();
-    expect(params.page.title).toBeDefined();
-    expect(params.page.referrer).toBeDefined();
+    expect(params.resource.page).toBeDefined();
+    expect(params.resource.page.url).toBeDefined();
+    expect(params.resource.page.title).toBeDefined();
+    expect(params.resource.page.referrer).toBeDefined();
 
-    expect(params.properties).toEqual({"hello": true});
+    expect(params.resource.visitor).toEqual({});
 
-    expect(params.visitor).toEqual({});
+    expect(params.data).toEqual({"hello": true});
   });
 });

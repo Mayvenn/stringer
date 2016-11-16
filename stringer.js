@@ -22,18 +22,22 @@
 
     if (eventName && !blockRe.test(window.navigator.userAgent)) {
       send({
-        client_timestamp: Date.now(),
         id: uuid(rng),
         name: eventName,
         source: sourceSite,
-        device: device,
-        page: {
-          url: window.location.href,
-          title: window.document.title,
-          referrer: window.document.referrer
+        resource:{
+          device: device,
+          page: {
+            url: window.location.href,
+            title: window.document.title,
+            referrer: window.document.referrer
+          },
+          visitor: visitor,
+          stringer: {
+            ts: Date.now()
+          }
         },
-        properties: args,
-        visitor: visitor
+        data: args
       });
     }
   };
