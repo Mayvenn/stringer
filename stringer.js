@@ -7,7 +7,8 @@
       visitor = fetchVisitor(),
       sourceSite = "default",
       environments = {production: "https://t.mayvenn.com/",
-                      acceptance: "https://t.diva-acceptance.com/"},
+                      acceptance: "https://t.diva-acceptance.com/",
+                      development: "http://localhost:3013"},
       debug = false,
       serverURI,
       send;
