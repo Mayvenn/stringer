@@ -20,7 +20,7 @@
     debug = config.debug || debug;
 
     if (!serverURI) {
-      throw new Error("Invalid Environment: " + config.environment);
+      log("Invalid Environment", config.environment);
     }
   };
 
@@ -159,7 +159,7 @@
   function log() {
     try {
       if (debug && 'undefined' !== typeof console && console.log) {
-        console.log.apply(console, arguments);
+        console.log.apply(console, Array.prototype.concat.apply(["stringer"], arguments));
       }
     } catch (e) {}
   }
