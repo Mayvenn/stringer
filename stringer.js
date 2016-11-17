@@ -39,7 +39,7 @@
             referrer: window.document.referrer
           },
           visitor: visitor,
-          stringer: {
+          client: {
             ts: Date.now()
           }
         },
