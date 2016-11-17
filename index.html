@@ -5,7 +5,7 @@
 
         <script>
         // snippet for all sites to use below; modify stringer.init as appropriate
-        (function() {
+        (function(window, document) {
           var stringer = window.stringer = window.stringer || [],
               methods = ["init", "track", "identify", "clear"];
 
@@ -38,7 +38,7 @@
           stringer.init({debug: true,
                          environment: "acceptance",
                          sourceSite: "storefront"});
-        })();
+        })(window, document);
         </script>
         <script>
          window.stringer.track('blah', {"hello": true});
