@@ -6,15 +6,21 @@
       device = captureDevice(),
       visitor = fetchVisitor(),
       sourceSite = "default",
-      serverURI = "https://t.mayvenn.com/",
+      environments = {production: "https://t.mayvenn.com/",
+                      acceptance: "https://t.diva-acceptance.com/"},
       debug = false,
+      serverURI,
       send;
 
   function init(config) {
     setCookie("stringer.distinct_id", device.distinct_id, { domain: rootDomain() });
-    serverURI = config.serverURI || serverURI;
+    serverURI = environments[config.environment];
     sourceSite = config.sourceSite || sourceSite;
     debug = config.debug || debug;
+
+    if (!serverURI) {
+      throw new Error("Invalid Environment: " + config.environment);
+    }
   };
 
   function track (eventName, args) {
