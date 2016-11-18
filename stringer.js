@@ -4,6 +4,7 @@
   var self = {},
       rng = initRandom(window),
       device = captureDevice(),
+      browser = captureBrowser(),
       visitor = fetchVisitor(),
       sourceSite = "default",
       environments = {production: "https://t.mayvenn.com/",
@@ -34,6 +35,7 @@
         source: sourceSite,
         resource:{
           device: device,
+          browser: browser,
           page: {
             url: window.location.href,
             title: window.document.title,
@@ -94,10 +96,17 @@
 
   function captureDevice() {
     return {
+      height: window.screen.height,
+      width: window.screen.width,
+      pixel_ratio: window.devicePixelRatio
+    };
+  }
+
+  function captureBrowser() {
+    return {
       distinct_id: readCookie("stringer.distinct_id") || makeid(24),
-      screen_height: window.screen.height,
-      screen_width: window.screen.width,
-      pixel_ratio: window.devicePixelRatio,
+      height: document.documentElement.clientHeight,
+      width: document.documentElement.clientWidth,
       vendor: window.navigator.vendor
     };
   }

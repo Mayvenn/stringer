@@ -54,10 +54,15 @@ describe("test stringer", function() {
     expect(params.source).toEqual(sourceSite);
 
     expect(params.resource.device).toBeDefined();
-    expect(params.resource.device.screen_height).toBeDefined();
-    expect(params.resource.device.screen_width).toBeDefined();
+    expect(params.resource.device.height).toBeDefined();
+    expect(params.resource.device.width).toBeDefined();
     expect(params.resource.device.pixel_ratio).toBeDefined();
-    expect(params.resource.device.vendor).toBeDefined();
+
+    expect(params.resource.browser).toBeDefined();
+    expect(params.resource.browser.distinct_id).toBeDefined();
+    expect(params.resource.browser.vendor).toBeDefined();
+    expect(params.resource.browser.width).toBeDefined();
+    expect(params.resource.browser.height).toBeDefined();
 
     expect(params.resource.page).toBeDefined();
     expect(params.resource.page.url).toBeDefined();
