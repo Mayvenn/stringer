@@ -15,7 +15,7 @@
       send;
 
   function init(config) {
-    setCookie("stringer.distinct_id", device.distinct_id, { domain: rootDomain() });
+    setCookie("stringer.distinct_id", browser.distinct_id, { domain: rootDomain() });
     serverURI = environments[config.environment];
     sourceSite = config.sourceSite || sourceSite;
     debug = config.debug || debug;
