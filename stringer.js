@@ -63,14 +63,12 @@
 
     setCookie("stringer.user_email", userEmail);
     setCookie("stringer.user_id", userId);
-    track("identify");
   };
 
   function clear () {
     visitor = {};
     removeCookie("stringer.user_email");
     removeCookie("stringer.user_id");
-    track("clear_identify");
   };
 
   function isNull(value) {

@@ -18,6 +18,8 @@ describe("test stringer", function() {
     window.stringer.init({environment: "development",
                           sourceSite: sourceSite});
 
+    window.stringer.identify("anything@example.com", 42);
+
     // Get estimated timestamp range for the request
     tsStart = Date.now();
     window.stringer.track('add-to-bag', { "hello": true });
@@ -69,7 +71,8 @@ describe("test stringer", function() {
     expect(params.resource.page.title).toBeDefined();
     expect(params.resource.page.referrer).toBeDefined();
 
-    expect(params.resource.visitor).toEqual({});
+    expect(params.resource.visitor).toEqual({"user_email": "anything@example.com",
+                                             "user_id": 42});
 
     expect(params.data).toEqual({"hello": true});
   });
