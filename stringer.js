@@ -52,14 +52,10 @@
   };
 
   function identify (userEmail, userId) {
-    visitor = {};
-    if (!isNull(userEmail)) {
-      visitor.user_email = userEmail;
-    }
-
-    if (!isNull(userId)) {
-      visitor.user_id = userId;
-    }
+    visitor = {
+      user_email: userEmail,
+      user_id: userId
+    };
 
     setCookie("stringer.user_email", userEmail);
     setCookie("stringer.user_id", userId);
