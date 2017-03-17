@@ -266,7 +266,7 @@
   addPublicFn("track", track);
   addPublicFn("identify", identify);
   addPublicFn("clear", clear);
-  self.get_browser_id = function() {
+  self.getBrowserId = function() {
       return browser.distinct_id;
   };
 
