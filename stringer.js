@@ -266,6 +266,9 @@
   addPublicFn("track", track);
   addPublicFn("identify", identify);
   addPublicFn("clear", clear);
+  self.get_browser_id = function() {
+      return browser.distinct_id;
+  };
 
   window.stringer = self;
   if (Array.isArray(oldStringer)) {
