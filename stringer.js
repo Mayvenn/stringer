@@ -167,10 +167,16 @@
     } catch (e) {}
   }
 
+  function jsonString(value) {
+    JSON.stringify(value).replace(/[\u007F-\uFFFF]/g, function(chr) {
+      return "\\u" + ("0000" + chr.charCodeAt(0).toString(16)).substr(-4);
+    });
+  }
+
   if (window.navigator.sendBeacon) {
     send = function send(payload) {
       log("send", serverURI, payload);
-      window.navigator.sendBeacon(serverURI, JSON.stringify(payload));
+      window.navigator.sendBeacon(serverURI, jsonString(payload));
     };
   } else {
     send = function send(payload) {
@@ -178,7 +184,7 @@
       var xhr = new XMLHttpRequest();
       xhr.open("POST", serverURI);
       xhr.setRequestHeader("Content-Type", "text/plain");
-      xhr.send(JSON.stringify(payload));
+      xhr.send(jsonString(payload));
     };
   }
 
