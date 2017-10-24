@@ -25,7 +25,7 @@
     }
   };
 
-  function track (eventName, args) {
+  function track (eventName, args, cb) {
     var blockRe = /(google web preview|baiduspider|yandexbot|bingbot|googlebot|yahoo! slurp)/i;
 
     if (eventName && !blockRe.test(window.navigator.userAgent)) {
@@ -47,7 +47,7 @@
           }
         },
         data: args
-      });
+      }, cb);
     }
   };
 
@@ -175,14 +175,20 @@
   }
 
   if (window.navigator.sendBeacon) {
-    send = function send(payload) {
+    send = function send(payload, cb) {
       log("send", serverURI, payload);
       window.navigator.sendBeacon(serverURI, jsonString(payload));
+      if (cb) cb();
     };
   } else {
-    send = function send(payload) {
+    send = function send(payload, cb) {
       log("send", serverURI, payload);
       var xhr = new XMLHttpRequest();
+      xhr.onreadystatechange = function() {
+        if (cb && xhr.readyState === 4) {
+          cb();
+        }
+      };
       xhr.open("POST", serverURI);
       xhr.setRequestHeader("Content-Type", "text/plain");
       xhr.send(jsonString(payload));
