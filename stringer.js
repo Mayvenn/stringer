@@ -183,14 +183,20 @@
   } else {
     send = function send(payload, cb) {
       log("send", serverURI, payload);
-      var xhr = new XMLHttpRequest();
-      xhr.onreadystatechange = function() {
-        if (cb && xhr.readyState === 4) {
-          cb();
-        }
+      // this is referenced like a lock to only fire the callback once
+      var state = {cbTriggered: false};
+      var triggerCallback = function(){
+        if (!state.cbTriggered && cb) cb();
+        state.cbTriggered = true;
       };
+      window.setTimeout(triggerCallback, 500);
+
+      var xhr = new XMLHttpRequest();
       xhr.open("POST", serverURI);
       xhr.setRequestHeader("Content-Type", "text/plain");
+      xhr.onreadystatechange = function() {
+        if (xhr.readyState === 4) triggerCallback();
+      };
       xhr.send(jsonString(payload));
     };
   }
