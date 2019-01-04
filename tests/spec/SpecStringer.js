@@ -1,9 +1,6 @@
 describe("test stringer", function() {
 
   beforeEach(function() {
-    if (window.navigator.sendBeacon) {
-      spyOn(window.navigator, "sendBeacon");
-    }
     jasmine.Ajax.install();
   });
 
@@ -14,7 +11,7 @@ describe("test stringer", function() {
   it("makes correct request when tracked after stringer has loaded", function() {
     var serverURI = "http://localhost:3013",
         sourceSite = "test",
-        request, sendBeaconArgs, params, tsStart, tsEnd;
+        request, params, tsStart, tsEnd;
     window.stringer.init({environment: "development",
                           sourceSite: sourceSite});
 
@@ -25,26 +22,19 @@ describe("test stringer", function() {
     window.stringer.track('add-to-bag', { "hello": true });
     tsEnd = Date.now();
 
-    if (window.navigator.sendBeacon) {
-      expect(window.navigator.sendBeacon).toHaveBeenCalled();
-      sendBeaconArgs = window.navigator.sendBeacon.calls.argsFor(0);
-      expect(sendBeaconArgs[0]).toEqual(serverURI);
-      params = JSON.parse(sendBeaconArgs[1]);
-    } else {
-      request = jasmine.Ajax.requests.mostRecent();
+    request = jasmine.Ajax.requests.mostRecent();
 
-      expect({
-        url: request.url,
-        method: request.method,
-        requestHeaders: request.requestHeaders
-      }).toEqual({
-        url: serverURI,
-        method: "POST",
-        requestHeaders: {"Content-Type": "text/plain"}
-      });
+    expect({
+      url: request.url,
+      method: request.method,
+      requestHeaders: request.requestHeaders
+    }).toEqual({
+      url: serverURI,
+      method: "POST",
+      requestHeaders: {"Content-Type": "text/plain"}
+    });
 
-      params = JSON.parse(request.params);
-    }
+    params = JSON.parse(request.params);
 
     expect(params.id).toMatch(
         /[0-9A-Fa-f]{8}-[0-9A-Fa-f]{4}-[0-9A-Fa-f]{4}-[0-9A-Fa-f]{4}-[0-9A-Fa-f]{12}/);

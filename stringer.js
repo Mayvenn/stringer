@@ -11,8 +11,7 @@
                       acceptance: "https://t.diva-acceptance.com/",
                       development: "http://localhost:3013"},
       debug = false,
-      serverURI,
-      send;
+      serverURI;
 
   function init(config) {
     setCookie("stringer.distinct_id", browser.distinct_id, { domain: rootDomain() });
@@ -174,31 +173,23 @@
       });
   }
 
-  if (window.navigator.sendBeacon) {
-    send = function send(payload, cb) {
-      log("send", serverURI, payload);
-      window.navigator.sendBeacon(serverURI, jsonString(payload));
-      if (cb) cb();
+  function send(payload, cb) {
+    log("send", serverURI, payload);
+    // this is referenced like a lock to only fire the callback once
+    var state = {cbTriggered: false};
+    var triggerCallback = function(){
+      if (!state.cbTriggered && cb) cb();
+      state.cbTriggered = true;
     };
-  } else {
-    send = function send(payload, cb) {
-      log("send", serverURI, payload);
-      // this is referenced like a lock to only fire the callback once
-      var state = {cbTriggered: false};
-      var triggerCallback = function(){
-        if (!state.cbTriggered && cb) cb();
-        state.cbTriggered = true;
-      };
-      window.setTimeout(triggerCallback, 500);
+    window.setTimeout(triggerCallback, 500);
 
-      var xhr = new XMLHttpRequest();
-      xhr.open("POST", serverURI);
-      xhr.setRequestHeader("Content-Type", "text/plain");
-      xhr.onreadystatechange = function() {
-        if (xhr.readyState === 4) triggerCallback();
-      };
-      xhr.send(jsonString(payload));
+    var xhr = new XMLHttpRequest();
+    xhr.open("POST", serverURI);
+    xhr.setRequestHeader("Content-Type", "text/plain");
+    xhr.onreadystatechange = function() {
+      if (xhr.readyState === 4) triggerCallback();
     };
+    xhr.send(jsonString(payload));
   }
 
   // from https://github.com/broofa/node-uuid
