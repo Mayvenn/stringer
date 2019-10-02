@@ -6,21 +6,22 @@ var gzip = require('gulp-gzip');
 
 var BUILD_DIR = "./target";
 
-gulp.task('clean-build', function () {
+exports.cleanBuild = function () {
   return del([BUILD_DIR]);
-});
+};
 
-gulp.task('build-js', ['clean-build'], function () {
+exports.buildJs = function () {
+  exports.cleanBuild();
   return gulp.src(['stringer.js'])
     .pipe(uglify().on('error', function(e) { console.log(e); }))
     .pipe(sha({length: 7}))
     .pipe(gzip({append: false}))
     .pipe(gulp.dest(BUILD_DIR));
-});
+};
 
 
-gulp.task('default', ['build-js']);
+exports.default = exports.buildJs;
 
-gulp.task('watch', function(){
+exports.watch = function(){
   gulp.watch('stringer.js', ['build-js']);
-})
+};
