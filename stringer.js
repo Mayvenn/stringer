@@ -269,6 +269,10 @@
     };
   }
 
+  function getBrowserId(callback) {
+    return callback(browser.distinct_id);
+  }
+
   // These should be the only public functions/vars that are exposed through self,
   // otherwise leave them in the closure!
   self.loaded = true;
@@ -276,9 +280,7 @@
   addPublicFn("track", track);
   addPublicFn("identify", identify);
   addPublicFn("clear", clear);
-  self.getBrowserId = function() {
-      return browser.distinct_id;
-  };
+  addPublicFn("getBrowserId", getBrowserId);
 
   window.stringer = self;
   if (Array.isArray(oldStringer)) {

@@ -7,7 +7,7 @@
         // snippet for all sites to use below; modify stringer.init as appropriate
         (function(window, document) {
           var stringer = window.stringer = window.stringer || [],
-              methods = ["init", "track", "identify", "clear"];
+              methods = ["init", "track", "identify", "clear", "getBrowserId"];
 
           if (stringer.snippetRan || stringer.loaded) { return; }
 
