@@ -27,6 +27,8 @@
     "gulp-gitshasuffix": "^1.0.0",
     "gulp-gzip": "^1.4.2",
     "gulp-uglify": "^2.1.2",
-    "lodash.template": "^4.5.0"
+    "lodash.template": "^4.5.0",
+    "kind-of": "~>6.0.3",
+    "minimist": "~> 0.2.1"
   }
 }
