@@ -19,9 +19,8 @@ exports.buildJs = function () {
     .pipe(gulp.dest(BUILD_DIR));
 };
 
-
 exports.default = exports.buildJs;
 
 exports.watch = function(){
-  gulp.watch('stringer.js', ['build-js']);
+  gulp.watch('stringer.js', gulp.series(exports.buildJs));
 };
