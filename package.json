@@ -29,6 +29,6 @@
     "gulp-uglify": "^3.0.2",
     "kind-of": "~>6.0.3",
     "lodash.template": "^4.5.0",
-    "minimist": "~> 1.2.5"
+    "minimist": "~> 1.2.6"
   }
 }
